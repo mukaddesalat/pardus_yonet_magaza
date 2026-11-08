@@ -15,8 +15,13 @@ URL: `https://raw.githubusercontent.com/mukaddesalat/pardus_yonet_magaza/main/ka
 6. **Öğrenci Masaüstü ve İndirilenleri Temizle** (`ogrenci-masaustu-temizle`)
 7. **Tarayıcı Önbellek ve Açık Oturumları Temizle** (`tarayici-sifirla`)
 8. **Ağ ve Ağ Geçidi Bağlantı Testi** (`ag-baglanti-testi`)
+9. **Güncellenebilir Paket Sayacı ve Raporu** (`paket-guncelleme-sayaci`)
 
-## 🤝 Katkıda Bulunma Rehberi (Öğretmenler İçin)
+## 🤝 Katkıda Bulunma ve Araç Geliştirme Rehberi
+Öğretmenlerin katkı sağlaması için karmaşık dijital imza süreçlerine gerek yoktur:
+
 1. Bu depoyu çatallayın (Fork) veya doğrudan bir dal (branch) açın.
-2. `araclar/<arac-id>/` klasörü altına aracınızı ekleyin.
+2. `araclar/<arac-id>/` klasörü altına aracınızı ekleyin (`arac.json` ve `betik.sh`).
 3. PR göndererek diğer öğretmenlerle paylaşın.
+
+Ayrıntılı geliştirici kılavuzu ve örnek senaryolar için [Lab Kaptanı Komut Mağazası Kılavuzu](https://github.com/mukaddesalat/pardus_yonet/blob/main/belgeler/magaza_kilavuzu.md) dokümanını inceleyebilirsiniz.

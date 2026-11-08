@@ -140,5 +140,36 @@
     "sudo": false,
     "parametreler": [],
     "betik": "GW=$(ip route | awk '/default/ {print $3}' | head -n1)\necho \"=== Ağ Geçidi: $GW ===\"\nif [ -n \"$GW\" ]; then\n  ping -c 3 -W 2 \"$GW\" || echo \"Ağ geçidine ulaşılamadı!\"\nfi\necho \"=== DNS Testi (195.175.39.39) ===\"\nping -c 2 -W 2 195.175.39.39 2>/dev/null || echo \"Dış DNS erişimi başarısız!\"\n"
+  },
+  {
+    "id": "paket-guncelleme-sayaci",
+    "ad": "Güncellenebilir Paket Sayacı ve Raporu",
+    "kategori": "bakim",
+    "risk": "bilgi",
+    "ozet": "Sınıftaki bilgisayarlarda kaç adet güncellenebilir paket ve güvenlik yaması olduğunu bilgisayar başına hesaplayıp temiz bir liste halinde raporlar.",
+    "yazar": "Pardus Lab Topluluğu",
+    "surum": "1.0.0",
+    "sudo": false,
+    "parametreler": [
+      {
+        "ad": "onbellek_guncelle",
+        "etiket": "Önce Depo Listesini Güncelle (apt update)",
+        "tip": "secim",
+        "secenekler": ["hayir", "evet"],
+        "varsayilan": "hayir",
+        "zorunlu": true,
+        "aciklama": "'evet' seçilirse önce depolardan güncel liste çekilir; 'hayir' seçilirse mevcut önbellek taranır."
+      },
+      {
+        "ad": "detay_goster",
+        "etiket": "Rapor Detay Düzeyi",
+        "tip": "secim",
+        "secenekler": ["ayrintili", "ozet"],
+        "varsayilan": "ayrintili",
+        "zorunlu": true,
+        "aciklama": "'ayrintili' seçildiğinde güncellenecek paket adları listelenir; 'ozet' seçildiğinde sadece toplam sayılar gösterilir."
+      }
+    ],
+    "betik": "ONBELLEK=\"${PSY_P_onbellek_guncelle:-hayir}\"\nDETAY=\"${PSY_P_detay_goster:-ayrintili}\"\nHOSTNAME_VAL=$(hostname 2>/dev/null || cat /etc/hostname 2>/dev/null || echo \"Bilinmiyor\")\nIP_VAL=$(hostname -I 2>/dev/null | awk '{print $1}')\necho \"==================================================\"\necho \"  PARDUS PAKET GÜNCELLEME SAYACI VE ANALİZİ\"\necho \"  Bilgisayar: $HOSTNAME_VAL ($IP_VAL)\"\necho \"  Tarih: $(date '+%Y-%m-%d %H:%M:%S')\"\necho \"==================================================\"\nif [ \"$ONBELLEK\" = \"evet\" ]; then\n  echo -e \"\\n[*] Depolar taranıyor (apt-get update)...\"\n  sudo -n apt-get update -qq 2>/dev/null || true\nfi\nSIM_OUT=$(LC_ALL=C apt-get -s dist-upgrade 2>/dev/null || true)\nUPG_COUNT=$(echo \"$SIM_OUT\" | grep -E \"^[0-9]+ upgraded\" | awk '{print $1}')\n[ -z \"$UPG_COUNT\" ] && UPG_COUNT=0\nSEC_COUNT=$(echo \"$SIM_OUT\" | grep \"^Inst \" | grep -Ei \"(security|debian-security|pardus-security|-updates)\" | wc -l || echo 0)\nKERNEL_UPG=$(echo \"$SIM_OUT\" | grep \"^Inst linux-image\" | wc -l || echo 0)\necho \"\"\necho \"::psy:bilgi=Güncelleme analizi: $UPG_COUNT paket güncellenebilir.\"\nif [ \"$UPG_COUNT\" -eq 0 ]; then\n  echo \"  Durum                          : [GÜNCEL] Sistem günceldir.\"\n  echo \"  Toplam Güncellenebilir Paket   : 0\"\n  echo \"  Güvenlik Güncellemesi          : 0\"\n  echo \"==================================================\"\n  echo \"::psy:sonuc=guncel\"\n  exit 0\nfi\necho \"  Durum                          : [GÜNCELLEME GEREKLİ]\"\necho \"  Toplam Güncellenebilir Paket   : $UPG_COUNT\"\necho \"  Güvenlik Güncellemesi          : $SEC_COUNT\"\nif [ \"$KERNEL_UPG\" -gt 0 ]; then\n  echo \"  Çekirdek (Kernel) Güncellemesi : VAR ($KERNEL_UPG adet yeni çekirdek)\"\nelse\n  echo \"  Çekirdek (Kernel) Güncellemesi : Yok\"\nfi\necho \"==================================================\"\nif [ \"$DETAY\" = \"ayrintili\" ]; then\n  echo \"\"\n  echo \"Güncellenecek Paketlerin Listesi:\"\n  echo \"--------------------------------------------------\"\n  echo \"$SIM_OUT\" | grep \"^Inst \" | while read -r line; do\n    PKG=$(echo \"$line\" | awk '{print $2}')\n    NEW_VER=$(echo \"$line\" | sed -n 's/.*(\\(.*\\) .*/\\1/p' | awk '{print $1}')\n    IS_SEC=$(echo \"$line\" | grep -Ei \"(security|debian-security|-updates)\" >/dev/null && echo \"[GÜVENLİK]\" || echo \"\")\n    printf \"  %-32s -> %-20s %s\\n\" \"$PKG\" \"$NEW_VER\" \"$IS_SEC\"\n  done\n  echo \"--------------------------------------------------\"\nfi\necho \"\"\necho \"Öneri:\"\nif [ \"$SEC_COUNT\" -gt 0 ]; then\n  echo \"  [DİKKAT] $SEC_COUNT adet güvenlik güncellemesi mevcut!\"\nfi\necho \"  Güncellemek için: Lab Kaptanı 'Yazılım Merkezi' veya 'Serbest Uçbirim' kullanabilirsiniz.\"\necho \"==================================================\"\n"
   }
 ]
