@@ -5,7 +5,7 @@
   "risk": "yikici",
   "ozet": "Bilgisayardaki Firefox, Chrome, Brave vb. harici tüm tarayıcıları kaldırır; Chromium'u kurup sistem ve masaüstü genelinde varsayılan tarayıcı yapar.",
   "yazar": "Pardus Lab Topluluğu",
-  "surum": "1.0.0",
+  "surum": "1.0.1",
   "sudo": true,
   "parametreler": [
     {
