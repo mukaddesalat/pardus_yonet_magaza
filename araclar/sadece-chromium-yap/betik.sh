@@ -1,6 +1,6 @@
 echo "[*] Açık harici tarayıcı süreçleri sonlandırılıyor..."
-for proc in firefox firefox-esr chrome chromium-browser google-chrome brave opera microsoft-edge vivaldi epiphany midori falkon; do
-  pkill -f "$proc" 2>/dev/null || true
+for proc in firefox firefox-esr chrome brave opera msedge vivaldi-bin epiphany midori falkon; do
+  pkill -x "$proc" 2>/dev/null || true
 done
 
 echo "[*] Chromium kurulu mu denetleniyor..."
